@@ -1,0 +1,22 @@
+{
+  "name": "eeke",
+  "version": "1.0.0",
+  "description": "이벤트 크리에이터 플랫폼; 이크",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ./bin/www"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "chokidar": "^3.6.0",
+    "cookie-parser": "^1.4.6",
+    "express": "^4.19.2",
+    "http-errors": "^2.0.0",
+    "morgan": "^1.10.0",
+    "nunjucks": "^3.2.4",
+    "path": "^0.12.7"
+  }
+}
