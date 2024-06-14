@@ -4,6 +4,10 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const nunjucks = require('nunjucks');
+require('dotenv').config();
+
+const maria = require('./database/connect/maria');
+maria.connect()
 
 var indexRouter = require('./routes/index');
 // var usersRouter = require('./routes/users');
