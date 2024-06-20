@@ -6,8 +6,11 @@ var logger = require('morgan');
 const nunjucks = require('nunjucks');
 require('dotenv').config();
 
-const maria = require('./database/connect/maria');
-maria.connect()
+// const maria = require('./database/connect/maria-db');
+// maria.connect()
+
+const { mongoDB } = require("./database/connect/mongo-db");
+mongoDB();
 
 var indexRouter = require('./routes/index');
 // var usersRouter = require('./routes/users');
