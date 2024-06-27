@@ -3,7 +3,7 @@ var router = express.Router();
 
 const mongo = require('../database/connect/mongo-db');
 
-router.post('api/users/register', (req, res) => {
+router.post('/register', (req, res) => {
     const user = new User(req.body)
     
     // user.save((err, userInfo) => {
