@@ -15,9 +15,9 @@ export default {
     HelloWorld
   },
   mounted() {
-    this.axios.get('/api/test').then((response) => {
-      console.log(response);
-    })
+    // this.axios.get('/api/test').then((response) => {
+      
+    // })
   }
 }
 </script>
