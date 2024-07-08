@@ -1,7 +1,8 @@
 var express = require('express')
 var router = express.Router()
 
-const { User } = require("../models/User.js")
+const { User } = require('../models/User.js')
+const { auth } = require('../middleware/auth.js')
 
 router.post('/register', (req, res) => {
     const user = new User(req.body)
