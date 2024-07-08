@@ -42,15 +42,24 @@ router.post('/login', (req, res) => {
     })
 })
 
-// router.get('/logout', auth, (req, res) => {
-//     User.findOneAndUpdate(
-//         { _id: req.user._id }, 
-//         { token: '' }
-//     )
-//     .then((err, user) => {
-//         if (err) return res.json({ success: false, err })
-//         return res.status(200).send({ success: true })
-//     })
-// })
+router.get('/logout', auth, (req, res) => {
+    User.findOneAndUpdate(
+        { _id: req.user._id }, 
+        { token: '' }
+    )
+    .then((err, user) => {
+        if (err) return res.json({ success: false, err })
+        return res.status(200).send({ success: true })
+    })
+})
+
+router.get('/auth', auth, (req, res) => {
+    res.status(200).json({
+        _id: req.user._id,
+        isAuth: true,
+        loginId: req.user.loginId,
+        name: req.user.name
+      });
+})
   
 module.exports = router
