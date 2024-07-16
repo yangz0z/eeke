@@ -17,18 +17,15 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
   },
-  build: {
-    outDir: '../backend/public/'
-  },
-  // server: {
-  //   proxy: {
-  //     '/api': {
-  //       target: import.meta.env.VITE_API_TARGET || 'http://localhost:3000/api',
-  //       changeOrigin: true,
-  //       rewrite: (path) => path.replace(/^\/api/, ''),
-  //       secure: false,
-  //       ws: true
-  //     }
-  //   }
-  // }
+  server: {
+    proxy: {
+      '/api': {
+        target: process.env.VITE_API_URL || 'http://localhost:3000/api',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
+        secure: false,
+        ws: true
+      }
+    }
+  }
 })
