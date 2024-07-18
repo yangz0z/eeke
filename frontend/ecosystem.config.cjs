@@ -3,8 +3,9 @@ module.exports = {
         {
             name: 'vite-app',
             script: 'npm',
-            args: 'run preview',
-            watch: '.',
+            args: 'run start',
+            watch: false,
+            exec_mode: 'cluster',
             env: {
                 NODE_ENV: 'development'
             },
