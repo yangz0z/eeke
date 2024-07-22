@@ -18,8 +18,10 @@ const submit = () => {
         if(!res.data.success) {
             alert(res.data.message)
         } else {
-            // 로그인 성공 시 메인페이지로 이동
-        router.push({ name: 'main' })
+            // 로그인 성공
+            const path = sessionStorage.getItem('CURR_URL')
+            const query = JSON.parse(sessionStorage.getItem('CURR_QRY'))
+            router.push({ path: path, query: query })
         }
     })
 }
