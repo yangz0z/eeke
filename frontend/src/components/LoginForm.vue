@@ -1,6 +1,11 @@
 <script setup>
 import { reactive } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import axios from 'axios'
+import mainPage from '@/views/MainPage.vue'
+
+const router = useRouter()
+const route = useRoute()
 
 const form = reactive({
     id: '',
@@ -10,7 +15,12 @@ const form = reactive({
 const submit = () => {
     axios.post('/api/users/login', form)
     .then((res) => {
-        console.log(res)
+        if(!res.data.success) {
+            alert(res.data.message)
+        } else {
+            // 로그인 성공 시 메인페이지로 이동
+        router.push({ name: 'main' })
+        }
     })
 }
 
