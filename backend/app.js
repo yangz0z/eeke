@@ -29,9 +29,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/api/users', usersRouter);
 
-// catch 404 and forward to error handler
+//5초 타임아웃 설정
 app.use(function(req, res, next) {
-  next(createError(404));
+  res.setTimeout(5000, () => {
+    console.log('Request timed out.');
+    res.status(408).send('Request timed out')
+  });
+  next()
 });
 
 // error handler

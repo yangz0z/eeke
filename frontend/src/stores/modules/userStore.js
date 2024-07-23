@@ -15,6 +15,12 @@ const userStore = {
             state.name = payload.name
             state.token = payload.token
         },
+        logout(state) {
+            state.id = ''
+            state.loginId = ''
+            state.name = ''
+            state.token = ''
+        },
         loginCheck: function (state) {
             if (!state.token) {
                 router.push({

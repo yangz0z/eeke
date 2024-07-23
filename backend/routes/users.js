@@ -44,13 +44,20 @@ router.post('/login', (req, res) => {
 })
 
 router.get('/logout', auth, (req, res) => {
+    console.log('Logout request received')
     User.findOneAndUpdate(
         { _id: req.user._id }, 
         { token: '' }
     )
-    .then((err, user) => {
-        if (err) return res.json({ success: false, err })
-        return res.status(200).send({ success: true })
+    .then(user => {
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' })
+        }
+        return res.status(200).json({ success: true })
+    })
+    .catch(err => {
+        console.log(err)
+        return res.status(500).json({ success: false, err })
     })
 })
 

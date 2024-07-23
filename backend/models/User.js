@@ -78,12 +78,19 @@ userSchema.methods.generateToken = function (next) {
 
 userSchema.statics.findByToken = function (token, next) {
     const user = this
+    console.log('User.findByToken')
     jwt.verify(token, 'secretToken', function (err, decoded) {
+        if (err) return next(err)
         // 유저 아이디를 이용해서 유저를 찾은 다음에
         // 클라이언트에서 가져온 token과 db에 보관된 토큰이 일치하는지 확인
-        user.findOne({ _id: decoded, token: token }, function (err, user) {
-            if (err) return next(err)
+        user.findOne({ _id: decoded, token: token })
+        .then(user => {
+            console.log('find user success!')
             next(null, user)
+        })
+        .catch(err => {
+            console.log('find user failed!', err)
+            next(err, null)
         })
     })
 }
