@@ -13,11 +13,9 @@ const loggedIn = computed(() => !!store.state.user.token)
 const logout = () => {
     axios.get('/api/users/logout')
     .then((res) => {
-        console.log(res)
-        
         if (res.data.success) {
             store.commit('user/logout') // Vuex 상태 초기화
-            router.push('/login') // 로그인 페이지로 이동
+            router.push('/')
         } else {
             log.info('failed logout!!')
         }
