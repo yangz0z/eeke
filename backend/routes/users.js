@@ -37,7 +37,7 @@ router.post('/login', (req, res) => {
                 res
                     .cookie('accessToken', user.token)
                     .status(200)
-                    .json({ success: true, id: user._id })
+                    .json({ success: true, id: user._id, loginId: user.loginId, name: user.name, token: user.token })
             })
         })
     })
