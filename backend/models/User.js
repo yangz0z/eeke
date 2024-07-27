@@ -35,7 +35,7 @@ const userSchema = mongoose.Schema({
         required: true
     },
     regDate: {
-        type: Date
+        type: String
     },
     token: {
         type: String

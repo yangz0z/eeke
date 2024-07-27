@@ -1,5 +1,6 @@
 var express = require('express')
 var router = express.Router()
+const moment = require('moment')
 
 const { User } = require('../models/User.js')
 const { auth } = require('../middleware/auth.js')
@@ -7,6 +8,7 @@ const { auth } = require('../middleware/auth.js')
 // 회원가입
 router.post('/register', async (req, res) => {
     const user = new User(req.body)
+    user.regDate = moment().format('YYYY-MM-DD HH:mm:ss')
 
     user.save().then(() => {
         return res.status(200).json({ success: true })
