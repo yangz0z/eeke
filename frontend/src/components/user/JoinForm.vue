@@ -14,6 +14,7 @@ const phoneNumber = ref(['010', '', ''])
 const password2 = ref('')
 const isIdChecked = ref(false)
 const idCheckResult = ref('')
+const birthCheckResult = ref('')
 
 const form = reactive({
     loginId: '',
@@ -46,8 +47,16 @@ const checkId = () => {
 // 생년월일 날짜형식 체크
 const isBirthChecked = computed(() => {
     const targetDate = form.birthDate
-    const date = moment(targetDate, 'YYYYMMDD', true)
-    return date.isValid()
+    if (!form.birthDate) {
+        birthCheckResult.value = ''
+        return false
+    }
+    const date = moment(targetDate, 'YYYY-MM-DD', true)
+    if (!date.isValid()) {
+        birthCheckResult.value = '유효한 날짜 형식이 아닙니다.'
+        return false
+    } 
+    return true
 })
 
 // 회원가입
@@ -105,13 +114,12 @@ const submit = () => {
         <div>
             <label for="birthDate">생년월일</label>
             <input 
-                type="text" 
+                type="date" 
                 id="birthDate" 
                 v-model="form.birthDate" 
-                placeholder="YYYYMMDD" 
-                maxlength="8" 
                 :disabled="form.phone.length < 13"
             >
+            <span>{{ birthCheckResult }}</span>
         </div>
         <div>
             <label>성별</label>
@@ -121,7 +129,7 @@ const submit = () => {
             <label For="female">여</label>
         </div>
         <div>
-            <button type="button" @click="submit" :disabled="form.birthDate.length < 8">회원가입</button>
+            <button type="button" @click="submit" :disabled="!isBirthChecked">회원가입</button>
         </div>
     </div>
 </div>
