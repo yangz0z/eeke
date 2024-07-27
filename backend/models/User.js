@@ -7,23 +7,32 @@ const userSchema = mongoose.Schema({
     loginId: {
         type: String,
         trim: true,
-        unique: 1
+        unique: 1,
+        maxlength: 20,
+        minlength: 4,
+        required: true
     },
     password: {
-        type: String
+        type: String,
+        required: true
     },
     name: {
         type: String,
-        maxlength: 20
+        maxlength: 20,
+        minlength: 2,
+        required: true
     },
     phone: {
-        type: String
+        type: String,
+        required: true
     },
     birthDate: {
-        type: Date
+        type: Date,
+        required: true
     },
-    gender: {
-        type: Number
+    gender: { // 0: 남자, 1: 여자
+        type: Number,
+        required: true
     },
     regDate: {
         type: Date

@@ -4,16 +4,28 @@ var router = express.Router()
 const { User } = require('../models/User.js')
 const { auth } = require('../middleware/auth.js')
 
-router.post('/register', (req, res) => {
+// 회원가입
+router.post('/register', async (req, res) => {
     const user = new User(req.body)
 
     user.save().then(() => {
         return res.status(200).json({ success: true })
     }).catch((err) => {
+        console.log(err)
         return res.json({ success: false, err })
     })
 })
 
+// 아이디 중복체크
+router.post('/check-id', async (req, res) => {
+    const existUser = await User.findOne({ loginId: req.body.loginId })
+    if (existUser) {
+        return res.json({ success: false, message: '이미 가입된 아이디입니다.'})
+    }
+    return res.status(200).json({ success: true, message: '사용 가능한 아이디입니다.' })
+})
+
+// 로그인
 router.post('/login', (req, res) => {
     User.findOne(
         { loginId: req.body.id }
@@ -41,8 +53,13 @@ router.post('/login', (req, res) => {
             })
         })
     })
+    .catch((err) => {
+        console.log(err)
+        res.json({ success:false, err })
+    })
 })
 
+// 로그아웃
 router.get('/logout', auth, (req, res) => {
     console.log('Logout request received')
     User.findOneAndUpdate(
@@ -61,6 +78,7 @@ router.get('/logout', auth, (req, res) => {
     })
 })
 
+// 인가
 router.get('/auth', auth, (req, res) => {
     res.status(200).json({
         _id: req.user._id,
