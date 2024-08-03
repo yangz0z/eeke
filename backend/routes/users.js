@@ -51,13 +51,41 @@ router.post('/login', (req, res) => {
                 res
                     .cookie('accessToken', user.token)
                     .status(200)
-                    .json({ success: true, id: user._id, loginId: user.loginId, name: user.name, token: user.token })
+                    .json({ success: true, id: user._id, loginId: user.loginId, name: user.name, email: user.email, token: user.token })
             })
         })
     })
     .catch((err) => {
         console.log(err)
         res.json({ success:false, err })
+    })
+})
+
+// 소셜 로그인
+router.post('/login/oauth', (req, res) => {
+    User.findOne(
+        { email: req.body.email }
+    ).then((user) => {
+        if(!user) {
+            // 기존에 없는 유저면 바로 회원가입 처리
+            user = new User(req.body)
+            user.regDate = moment().format('YYYY-MM-DD HH:mm:ss')
+            
+            user.save().then(() => {
+                return res.status(200).json({ success: true })
+            }).catch((err) => {
+                console.log(err)
+                return res.json({ success: false, err })
+            })
+        } 
+        user.generateToken((err, user) => {
+            if (err) return res.status(400).send(err)
+            res
+                .cookie('accessToken', user.token)
+                .status(200)
+                .json({ success: true, id: user._id, loginId: user.loginId, name: user.name, email: user.email, token: user.token })
+        })
+        
     })
 })
 

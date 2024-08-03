@@ -8,31 +8,33 @@ const userSchema = mongoose.Schema({
         type: String,
         trim: true,
         unique: 1,
-        maxlength: 20,
         minlength: 4,
-        required: true
+        lowercase: true
+    },
+    email: {
+        type: String,
+        trim: true,
+        unique: true,
+        lowercase: true
     },
     password: {
-        type: String,
-        required: true
+        type: String
     },
     name: {
         type: String,
+        trim: true,
         maxlength: 20,
         minlength: 2,
         required: true
     },
     phone: {
-        type: String,
-        required: true
+        type: String
     },
     birthDate: {
-        type: Date,
-        required: true
+        type: Date
     },
-    gender: { // 0: 남자, 1: 여자
-        type: Number,
-        required: true
+    gender: { // 1: 남자, 2: 여자, 0: 미입력
+        type: Number
     },
     regDate: {
         type: String
@@ -78,9 +80,11 @@ userSchema.methods.generateToken = function (next) {
     user.token = token
     user.save()
         .then((user) => {
-           next(null, user)
+            console.log('generate token success!')
+            next(null, user)
         })
         .catch((err) => {
+            console.log('generate token fail...', err)
             next(err, null)
         })
 }
