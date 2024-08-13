@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, defineEmits, computed } from 'vue'
+import { reactive, computed } from 'vue'
 
 const form = reactive({
     id: '',
