@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import userRoutes from '@/router/user.js'
+import eventRoutes from '@/router/event.js'
 import MainPage from '../views/MainPage.vue'
 
 const router = createRouter({
@@ -10,7 +11,8 @@ const router = createRouter({
       name: 'main',
       component: MainPage
     },
-    ...userRoutes
+    ...userRoutes,
+    ...eventRoutes
   ]
 })
 
