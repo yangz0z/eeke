@@ -1,6 +1,7 @@
 <script setup>
-import { reactive, ref, watch } from "vue"
+import { reactive, ref, watch } from 'vue'
 import Editor from '@/components/Editor.vue'
+import axios from 'axios'
 
 const form = reactive({
     thumbnail: '',
@@ -28,22 +29,49 @@ const step = ref(0)
 const previewThumbnail = ref('')
 
 // 썸내일 변경
-const changeThumbnail = (event) => {
+const changeThumbnail = async (event) => {
     const files = event.target?.files
     if (files.length > 0) {
         const file = files[0]
-        const reader = new FileReader()
+        const uploadedFile = await uploadFile(file)
+        
+        previewThumbnail.value = uploadedFile.src
+        form.thumbnail = uploadedFile
 
-        reader.onload = (e) => {
-            previewThumbnail.value = e.target.result
-        }
-        reader.readAsDataURL(file)
-        form.thumbnail = file
+        // const reader = new FileReader()
+        // reader.onload = (e) => {
+        //     previewThumbnail.value = e.target.result
+        // }
+        // reader.readAsDataURL(file)
     }
 }
 
+// 이미지 서버에 업로드
+const uploadFile = async (file) => {
+    const formData = new FormData()
+    formData.append('image', file)
+
+    const res = await axios.post('/api/files/upload', formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        }
+    })
+    .catch((err) => {
+        console.log(err)
+    })
+    if (res.data.success) {
+        return { src: res.data.src, path: res.data.path, filename: res.data.filename }
+    }
+}
+
+// 에디터 내용 변경
 const changeContent = (content) => {
-    // console.log('내용 변경 => ', content)   
+    form.content = content
+}
+
+// 등록
+const submit = () => {
+    
 }
 
 // watch (form, () => {

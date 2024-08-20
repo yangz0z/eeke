@@ -13,6 +13,7 @@ mongoDB();
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var filesRouter = require('./routes/files');
 
 var app = express();
 
@@ -26,8 +27,12 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// 정적 파일 제공
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 app.use('/', indexRouter);
 app.use('/api/users', usersRouter);
+app.use('/api/files', filesRouter);
 
 //5초 타임아웃 설정
 app.use(function(req, res, next) {
