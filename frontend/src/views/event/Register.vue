@@ -1,10 +1,11 @@
 <script setup>
 import { reactive, ref, watch } from 'vue'
 import Editor from '@/components/Editor.vue'
+import { uploadFile, deleteFile } from '@/utils/fileUtil'
 import axios from 'axios'
 
 const form = reactive({
-    thumbnail: '',
+    thumbnail: {},
     title: '',
     intro: '',
     content: '',
@@ -30,6 +31,9 @@ const previewThumbnail = ref('')
 
 // 썸내일 변경
 const changeThumbnail = async (event) => {
+    // 이전 저장된 썸내일 삭제
+    await deleteFile(form.thumbnail?.filename)
+
     const files = event.target?.files
     if (files.length > 0) {
         const file = files[0]
@@ -46,24 +50,6 @@ const changeThumbnail = async (event) => {
     }
 }
 
-// 이미지 서버에 업로드
-const uploadFile = async (file) => {
-    const formData = new FormData()
-    formData.append('image', file)
-
-    const res = await axios.post('/api/files/upload', formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        }
-    })
-    .catch((err) => {
-        console.log(err)
-    })
-    if (res.data.success) {
-        return { src: res.data.src, path: res.data.path, filename: res.data.filename }
-    }
-}
-
 // 에디터 내용 변경
 const changeContent = (content) => {
     form.content = content
@@ -71,7 +57,7 @@ const changeContent = (content) => {
 
 // 등록
 const submit = () => {
-    
+
 }
 
 // watch (form, () => {
