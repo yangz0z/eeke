@@ -2,6 +2,7 @@
 import { reactive, ref, watch } from 'vue'
 import Editor from '@/components/Editor.vue'
 import { uploadFile, deleteFile } from '@/utils/fileUtil'
+import { isEmpty } from '@/utils/validateUtil'
 import axios from 'axios'
 
 const form = reactive({
@@ -26,8 +27,9 @@ const form = reactive({
 })
 
 const step = ref(0)
-
 const previewThumbnail = ref('')
+const categories = ref({})
+const showCategoryId = ref('')
 
 // 썸내일 변경
 const changeThumbnail = async (event) => {
@@ -55,14 +57,25 @@ const changeContent = (content) => {
     form.content = content
 }
 
+// 전체 카테고리 조회
+const getAllCategories = async () => {
+    const result = await axios.get('/api/categories/all')
+    if (result.data.success == true) {
+        categories.value = result.data.data
+        showCategoryId.value = categories.value[0]._id
+    }
+}
+
 // 등록
 const submit = () => {
 
 }
 
-// watch (form, () => {
-//     console.log(form.thumbnail)
-// })
+watch (step, () => {
+    if (step.value == 2 && isEmpty(categories.value)) {
+        getAllCategories()
+    }
+})
 </script>
 
 <template>
@@ -117,7 +130,21 @@ const submit = () => {
         </div>
         <div v-show="step == 2">
             <h1>이벤트의 카테고리를 선택해주세요.</h1>
-            <!-- 이벤트 카테고리 리스트 -->
+            <div>
+                <ul>
+                    <li v-for="category in categories" :key="category._id">
+                        <a href="#" @click.prevent="showCategoryId = category._id">{{ category.name }}</a>
+                        <ul v-show="showCategoryId == category._id">
+                            <li v-for="subCategory in category.subCategories" :key="subCategory._id">
+                                <a href="#" @click.prevent="() => {
+                                    form.category = subCategory._id
+                                    step++
+                                }">{{ subCategory.name }}</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
         </div>
         <div v-show="step == 3">
             <h1>이벤트가 언제 시작하나요?</h1>
