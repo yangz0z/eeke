@@ -1,6 +1,7 @@
 <script setup>
 import { reactive, ref, watch } from 'vue'
 import Editor from '@/components/Editor.vue'
+import Address from '@/components/Address.vue'
 import { uploadFile, deleteFile } from '@/utils/fileUtil'
 import { isEmpty } from '@/utils/validateUtil'
 import axios from 'axios'
@@ -16,8 +17,10 @@ const form = reactive({
     endDt: '',
     endTm: '',
     online: true,
-    location: '',
-    locationDetail: '',
+    zonecode: '',
+    address: '',
+    detailAddress: '',
+    extraAddress: '',
     free: true,
     amount: 0,
     limit: true,
@@ -26,10 +29,12 @@ const form = reactive({
     keyword: []
 })
 
-const step = ref(0)
+const step = ref(4)
 const previewThumbnail = ref('')
 const categories = ref({})
 const showCategoryId = ref('')
+const oneday = ref(false)
+const allday = ref(false)
 
 // 썸내일 변경
 const changeThumbnail = async (event) => {
@@ -66,9 +71,25 @@ const getAllCategories = async () => {
     }
 }
 
+// 다음 넘어가기 전 유효성 체크
+const handleNextStep = () => {
+    const checkStep = step.value
+    // TODO 유효성 체크
+    step.value++
+}
+
 // 등록
 const submit = () => {
+    if (oneday.value) {
+        form.endDt = form.startDt
+    }
+}
 
+const updateAddress = (data) => {
+    form.zonecode = data.zonecode || form.zonecode
+    form.address = data.address || form.address
+    form.detailAddress = data.detailAddress || form.detailAddress
+    form.extraAddress = data.extraAddress || form.extraAddress
 }
 
 watch (step, () => {
@@ -121,12 +142,12 @@ watch (step, () => {
                     </td>
                 </tr>
             </table>
-            <button type="button" @click="step++">다음으로</button>
+            <button type="button" @click="handleNextStep">다음으로</button>
         </div>
         <div v-show="step == 1">
             <h1>이벤트의 상세 내용을 입력해주세요.</h1>
             <Editor :content="form.content" @update="changeContent"/>
-            <button type="button" @click="step++">다음으로</button>
+            <button type="button" @click="handleNextStep">다음으로</button>
         </div>
         <div v-show="step == 2">
             <h1>이벤트의 카테고리를 선택해주세요.</h1>
@@ -136,15 +157,13 @@ watch (step, () => {
                         <a href="#" @click.prevent="showCategoryId = category._id">{{ category.name }}</a>
                         <ul v-show="showCategoryId == category._id">
                             <li v-for="subCategory in category.subCategories" :key="subCategory._id">
-                                <a href="#" @click.prevent="() => {
-                                    form.category = subCategory._id
-                                    step++
-                                }">{{ subCategory.name }}</a>
+                                <a href="#" @click.prevent="form.category = subCategory._id">{{ subCategory.name }}</a>
                             </li>
                         </ul>
                     </li>
                 </ul>
             </div>
+            <button type="button" @click="handleNextStep">다음으로</button>
         </div>
         <div v-show="step == 3">
             <h1>이벤트가 언제 시작하나요?</h1>
@@ -152,27 +171,49 @@ watch (step, () => {
                 <tr>
                     <th>날짜</th>
                     <td>
-                        <input type="date"/>
-                        <input type="date"/>
-                        <input type="radio" id="oneday"/>
+                        <input type="date" v-model="startDt"/>
+                        <input type="date" v-model="endDt" :disabled="oneday"/>
+                        <input 
+                            type="checkbox" 
+                            id="oneday" 
+                            :checked="oneday"
+                            v-model="oneday"
+                        />
                         <label for="oneday"> 하루만</label>
-                        <!-- TODO 하루만 체크시 종료일 disabled하고 종료일 = 시작일 -->
                     </td>
                 </tr>
                 <tr>
                     <th>시간</th>
                     <td>
-                        <input type="time"/>
-                        <input type="time"/>
-                        <input type="radio" id="allday"/>
+                        <input type="time" v-model="form.startTm" :disabled="allday"/>
+                        <input type="time" v-model="form.endTm" :disabled="allday"/>
+                        <input type="checkbox" 
+                            id="allday" 
+                            :checked="allday" 
+                            v-model="allday"
+                            @change="() => {
+                                form.startTm = '00:00'
+                                form.endTm = '23:59'
+                            }"
+                        />
                         <label for="allday"> 하루종일</label>
-                        <!-- TODO 하루종일 체크시 시작 종료시간 모두 disabled하고 00:00 - 23:59 셋팅 -->
                     </td>
                 </tr>
             </table>
+            <button type="button" @click="handleNextStep">다음으로</button>
         </div>
         <div v-show="step == 4">
             <h1>장소를 정해주세요.</h1>
+            <input type="radio" id="online" @click="form.online = true" :checked="form.online">
+            <label for="online">온라인</label>
+            <input type="radio" id="offline" @click="form.online = false" :checked="!form.online">
+            <label for="offline">오프라인</label>
+
+            <Address 
+                v-show="!form.online"
+                @update="updateAddress"
+             />
+             <button type="button" @click="handleNextStep">다음으로</button>
         </div>
         <div v-show="step == 5">
             <h1>참여비가 있나요?</h1>
